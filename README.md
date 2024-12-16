@@ -1,12 +1,4 @@
-This is a demo Next.js application including Fumadocs and Code Hike.
+A blog about my learning journey.
 
-- [Live demo](https://ch-with-fumadocs.vercel.app/)
-- [Code Hike](https://codehike.org) - learn about Code Hike
-- [Fumadocs](https://fumadocs.vercel.app) - learn about Fumadocs
+using [Next.js](https://nextjs.org) and [Tailwind CSS](https://tailwindcss.com) and [Vercel](https://vercel.com) and [Code Hike](https://codehike.org) and [Fumadocs](https://fumadocs.vercel.app).
 
-Clone it with:
-
-```bash
-$ npx degit code-hike/examples/with-fumadocs my-docs
-$ cd my-docs
-```
