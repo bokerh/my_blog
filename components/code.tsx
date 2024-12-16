@@ -13,7 +13,7 @@ export async function Code({ codeblock }: { codeblock: RawCode }) {
     <>
       <div className="text-sm text-gray-500">{highlighted.meta}</div>
 
-      <div className="absolute top-1 right-1">
+      <div>
         <CopyButton text={highlighted.code} />
       </div>
 
