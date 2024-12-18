@@ -1,23 +1,25 @@
 ---
 title: Code Hike Cheatsheet
 description: A quick reference guide for myself using Code Hike v1
-full: true
+full: false
 ---
 
 import { Scrollycoding } from "@/components/scrollycoding";
+import { InlineCode } from "@/components/code";
 
-## test
+## 代码渲染
 
-description
+**非**行内渲染代码: `var x = 10`
+
+行内渲染代码: _`var x = 10`_
 
 <Scrollycoding>
 
+## 分步展示
+
 # !!steps 第一步
 
-步骤描述
-
-- 描述 1
-- 描述 2
+气泡式注释
 
 {/* prettier-ignore */}
 ```js ! george.js
@@ -28,33 +30,11 @@ const houses = [
   "Baratheon",
   "Targaryen",
 ]
-
-const winner =
-  houses[
-    Math.floor(
-      Math.random() * houses.length,
-    )
-  ]
-
-console.log(`Iron Throne: ${winner}`)
 ```
 
-# !!steps 测试 markdown
+# !!steps 第二步
 
-步骤描述
-
-| 列 1     |     列 2     |     列 3 |
-| -------- | :----------: | -------: |
-| ~左对齐~ | **居中对齐** | `右对齐` |
-
-```mermaid
-graph TD
-A[Start] --> B{Is it?}
-B -->|Yes| C[OK]
-C --> D[Rethink]
-D --> B
-B ---->|No| E[End]
-```
+简单演示代码过渡动画
 
 ```js ! george.js
 const houses = [
@@ -74,18 +54,11 @@ const keepDreaming = () => {
 console.log(keepDreaming());
 ```
 
-</Scrollycoding>
+# !!steps 第三步
 
-```mermaid
-graph TD
-A[Start] --> B{Is it?}
-B -->|Yes| C[OK]
-C --> D[Rethink]
-D --> B
-B ---->|No| E[End]
-```
+展示代码对比
 
-```js george.js
+```js ! george.js
 function lorem(ipsum, dolor = 1) {
   const sit = ipsum == null ? 0 : ipsum.sit;
   // !diff -
@@ -96,7 +69,11 @@ function lorem(ipsum, dolor = 1) {
 }
 ```
 
-```js george.js
+# !!steps 第四步
+
+展示代码样式
+
+```js ! george.js
 function lorem(ipsum, dolor = 1) {
   // !className line-through
   const sit = ipsum == null ? 0 : ipsum.sit;
@@ -106,18 +83,24 @@ function lorem(ipsum, dolor = 1) {
 }
 ```
 
-```js george222.js
+# !!steps 第五步
+
+展示代码边框
+
+```js ! george222.js
+// !border(1:3)
 function lorem(ipsum, dolor = 1) {
   const sit = ipsum == null ? 0 : ipsum.sit;
   dolor = sit - amet(dolor);
   return sit ? consectetur(ipsum) : [];
 }
 
+// !bg[1:8] #E0F3AC
 function ipsum(ipsum, dolor = 1) {
   return dolor;
 }
 
-// !focus(1:5)
+// !focus=5 !mark=4[2:6]
 function dolor(ipsum, dolor = 1) {
   const sit = ipsum == null ? 0 : ipsum.sit;
   dolor = sit - amet(dolor);
@@ -125,9 +108,27 @@ function dolor(ipsum, dolor = 1) {
 }
 ```
 
-## testaa
+</Scrollycoding>
+
+## 测试 markdown
+
+| 列 1     |     列 2     |     列 3 |
+| -------- | :----------: | -------: |
+| ~左对齐~ | **居中对齐** | `右对齐` |
+
+## 测试 mermaid
+
+```mermaid
+graph TD
+A[Start] --> B{Is it?}
+B -->|Yes| C[OK]
+C --> D[Rethink]
+D --> B
+B ---->|No| E[End]
+```
 
 <Cards>
-  <Card title="Learn more about Code Hike" href="https://codehike.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.vercel.app" />
+<Card title="MDX 支持一览" href="https://fumadocs.vercel.app/docs/ui/markdown">
+
+</Card>
 </Cards>

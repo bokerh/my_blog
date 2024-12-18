@@ -1,4 +1,4 @@
-import { Pre, RawCode, highlight } from "codehike/code";
+import { Pre, RawCode, Inline, highlight } from "codehike/code";
 import { callout } from "@/components/annotations/callout";
 import { className } from "@/components/annotations/classname";
 import { wordWrap } from "@/components/annotations/word-wrap";
@@ -6,22 +6,37 @@ import { CopyButton } from "@/components/annotations/button";
 import { diff } from "@/components/annotations/diff";
 import { mark } from "@/components/annotations/mark";
 import { lineNumbers } from "@/components/annotations/line-numbers";
+import { borderHandler } from "@/components/annotations/border";
+import { bgHandler } from "@/components/annotations/background";
 
 export async function Code({ codeblock }: { codeblock: RawCode }) {
-  const highlighted = await highlight(codeblock, "github-from-css");
+  const highlighted = await highlight(codeblock, "github-light");
   return (
     <>
-      <div className="text-sm text-gray-500">{highlighted.meta}</div>
-
-      <div>
+      <div className="text-sm text-gray-500 w-full min-w-full flex justify-between">
+        {highlighted.meta}
         <CopyButton text={highlighted.code} />
       </div>
 
       <Pre
         code={highlighted}
-        handlers={[callout, className, wordWrap, mark, diff, lineNumbers]}
+        handlers={[
+          callout,
+          className,
+          wordWrap,
+          mark,
+          diff,
+          lineNumbers,
+          borderHandler,
+          bgHandler,
+        ]}
         className="border bg-card"
       />
     </>
   );
+}
+
+export async function InlineCode({ codeblock }: { codeblock: RawCode }) {
+  const highlighted = await highlight(codeblock, "github-dark");
+  return <Inline code={highlighted} style={highlighted.style} />;
 }

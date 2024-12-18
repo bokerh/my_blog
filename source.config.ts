@@ -9,12 +9,17 @@ export const { docs, meta } = defineDocs({
 const chConfig: CodeHikeConfig = {
   components: {
     code: "Code",
+    inlineCode: "InlineCode",
   },
+  syntaxHighlighting: {
+    theme: "slack-ochin",
+  },
+  ignoreCode: (codeblock) => codeblock.lang === "mermaid",
 };
 
 export default defineConfig({
   mdxOptions: {
-    remarkPlugins: (v) => [remarkMermaid, [remarkCodeHike, chConfig], ...v],
-    recmaPlugins: [[recmaCodeHike, chConfig]],
+    remarkPlugins: (v) => [[remarkCodeHike, chConfig], remarkMermaid, ...v],
+    recmaPlugins: [[recmaCodeHike, chConfig], remarkMermaid],
   },
 });

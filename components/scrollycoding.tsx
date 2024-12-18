@@ -12,6 +12,8 @@ import { wordWrap } from "@/components/annotations/word-wrap";
 import { className } from "@/components/annotations/classname";
 import { callout } from "@/components/annotations/callout";
 import { CopyButton } from "@/components/annotations/button";
+import { diff } from "@/components/annotations/diff";
+import { mark } from "@/components/annotations/mark";
 
 const Schema = Block.extend({
   steps: z.array(Block.extend({ code: CodeBlock })),
@@ -48,18 +50,17 @@ export function Scrollycoding(props: unknown) {
 }
 
 async function Code({ codeblock }: { codeblock: RawCode }) {
-  const highlighted = await highlight(codeblock, "github-from-css");
+  const highlighted = await highlight(codeblock, "github-light");
   return (
     <>
-      <div className="text-sm text-gray-500">{highlighted.meta}</div>
-
-      <div className="absolute top-1 right-1">
+      <div className="text-sm text-gray-500 w-full min-w-full flex justify-between">
+        {highlighted.meta}
         <CopyButton text={highlighted.code} />
       </div>
 
       <Pre
         code={highlighted}
-        handlers={[className, callout, tokenTransitions, wordWrap]}
+        handlers={[className, diff, mark, callout, tokenTransitions, wordWrap]}
         className="min-h-[40rem]"
       />
     </>
