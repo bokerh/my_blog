@@ -2,6 +2,7 @@
   "name": "blog",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next",
     "build": "next build",
@@ -9,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "codehike": "^1.0.4",
     "next": "15.1.1",
     "nextra": "^3.2.5",
     "nextra-theme-blog": "^3.2.5",
