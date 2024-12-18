@@ -11,7 +11,7 @@ export function Code({ codeblock }: { codeblock: HighlightedCode }) {
       <Pre
         code={codeblock}
         handlers={[callout]}
-        className="border bg-card"
+        className="border bg-card bg-slate-400 rounded-md p-5"
         style={codeblock.style}
       />
     </>
