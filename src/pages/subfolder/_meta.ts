@@ -1,5 +1,5 @@
 const meta = {
-  test: "测试中文",
+  test: "测试",
 };
 
 export default meta;

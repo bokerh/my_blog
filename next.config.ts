@@ -10,7 +10,7 @@ const chConfig: CodeHikeConfig = {
   components: { code: "Code" },
   ignoreCode: (codeblock) => codeblock.lang === "mermaid",
   syntaxHighlighting: {
-    theme: "github-light",
+    theme: "material-darker",
   },
 };
 
@@ -21,6 +21,9 @@ const mdxOptions = {
 
 const nextConfig: NextConfig = {
   /* config options here */
+  experimental: {
+    mdxRs: true,
+  },
 };
 
 const withNextra = nextra({
