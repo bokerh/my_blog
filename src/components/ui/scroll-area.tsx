@@ -4,6 +4,40 @@ import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 
+// ScrollToSelectedListItem 组件用于在列表项被选中时自动滚动到视图中
+// 接收两个props:
+// - isChosen: 布尔值,表示该项是否被选中
+// - children: React节点,要渲染的子组件内容
+const ScrollToSelectedListItem = ({
+  isChosen,
+  children,
+  scrollTo = "start",
+}: {
+  isChosen: boolean;
+  children: React.ReactNode;
+  scrollTo?: "start" | "center" | "end";
+}) => {
+  // 创建一个ref引用,用于获取span元素的DOM节点
+  const listItemRef = useRef<HTMLSpanElement>(null);
+
+  // 使用useEffect监听isChosen的变化
+  useEffect(() => {
+    // 当项目被选中且ref已挂载时
+    if (isChosen && listItemRef.current) {
+      // 调用scrollIntoView方法使元素滚动到视图中
+      // - behavior: "smooth" 使用平滑滚动动画
+      // - block: "start" 将元素对齐到视图顶部
+      listItemRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: scrollTo,
+      });
+    }
+  }, [isChosen, scrollTo]); // 依赖项数组中包含isChosen,当其变化时重新执行effect
+
+  // 返回一个带ref的span元素包裹children
+  return <span ref={listItemRef}>{children}</span>;
+};
+
 function useHorizontalScroll<T extends HTMLElement>() {
   const elRef = useRef<T>(null);
   useEffect(() => {
@@ -77,4 +111,4 @@ const ScrollBar = React.forwardRef<
 ));
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
 
-export { ScrollArea, ScrollBar, useHorizontalScroll };
+export { ScrollArea, ScrollBar, useHorizontalScroll, ScrollToSelectedListItem };

@@ -37,7 +37,7 @@ export function CodeTabs(props: { tabs: HighlightedCode[] }) {
               value={tab.meta}
               className="border-double bg-zinc-700/20"
             >
-              <span className="text-sm text-gray-400 mr-1"> {tab.meta}</span>
+              <span className="text-sm text-gray-400 mr-4"> {tab.meta}</span>
               <CopyButton text={tab.code} />
             </TabsTrigger>
           ))}
