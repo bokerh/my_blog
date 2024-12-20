@@ -24,7 +24,7 @@ export function CodeTabs(props: { tabs: HighlightedCode[] }) {
       <TabsList className="rounded-t-lg rounded-b-none bg-background">
         {tabs.map((tab) => (
           <TabsTrigger key={tab.meta} value={tab.meta}>
-            <span className="text-sm text-gray-400 mr-2"> {tab.meta}</span>
+            <span className="text-sm text-gray-400 mr-1"> {tab.meta}</span>
             <CopyButton text={tab.code} />
           </TabsTrigger>
         ))}
