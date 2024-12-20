@@ -3,7 +3,7 @@ import { Code, InlineCode } from "./src/components/code-blocks/code";
 import type { FC } from "react";
 
 const themeConfig: DocsThemeConfig = {
-  logo: <span>My Nextra Documentation</span>,
+  logo: <span>Bokerh&apos;s Blog</span>,
   project: {
     link: undefined,
   },
