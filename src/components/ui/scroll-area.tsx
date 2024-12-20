@@ -38,6 +38,44 @@ const ScrollToSelectedListItem = ({
   return <span ref={listItemRef}>{children}</span>;
 };
 
+// ScrollToSelectListItem 组件用于在列表项滚动到视图中时自动选中
+// 接收两个props:
+// - onSelect: 回调函数，当元素进入视图时触发
+// - children: React节点，要渲染的子组件内容
+const ScrollToSelectListItem = ({
+  onSelect,
+  children,
+  threshold = 0.5,
+}: {
+  onSelect: () => void;
+  children: React.ReactNode;
+  threshold?: number;
+}) => {
+  const listItemRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // 当元素进入视图时触发 onSelect
+        if (entries[0].isIntersecting) {
+          onSelect();
+        }
+      },
+      {
+        threshold: threshold, // 设置触发阈值，0.5 表示元素至少有 50% 在视图中
+      }
+    );
+
+    if (listItemRef.current) {
+      observer.observe(listItemRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [onSelect, threshold]);
+
+  return <span ref={listItemRef}>{children}</span>;
+};
+
 function useHorizontalScroll<T extends HTMLElement>() {
   const elRef = useRef<T>(null);
   useEffect(() => {
@@ -111,4 +149,10 @@ const ScrollBar = React.forwardRef<
 ));
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
 
-export { ScrollArea, ScrollBar, useHorizontalScroll, ScrollToSelectedListItem };
+export {
+  ScrollArea,
+  ScrollBar,
+  useHorizontalScroll,
+  ScrollToSelectedListItem,
+  ScrollToSelectListItem,
+};
