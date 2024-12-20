@@ -4,7 +4,7 @@ import { callout } from "@/components/annotations/callout";
 export function Code({ codeblock }: { codeblock: HighlightedCode }) {
   return (
     <>
-      <div className="text-xl text-red-600 w-full min-w-full flex justify-between">
+      <div className="text-center text-xl text-red-600 w-full min-w-full flex justify-between">
         {codeblock.meta}
       </div>
 

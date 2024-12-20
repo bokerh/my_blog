@@ -5,12 +5,29 @@ import type { FC } from "react";
 const themeConfig: DocsThemeConfig = {
   logo: <span>My Nextra Documentation</span>,
   project: {
-    link: "https://github.com/shuding/nextra",
+    link: undefined,
   },
   components: {
     Code: Code as FC,
     InlineCode: InlineCode as FC,
   },
+  feedback: {
+    content: null, // 这会禁用 feedback 按钮
+  },
+  darkMode: false,
+  nextThemes: {
+    defaultTheme: "dark",
+  },
+  editLink: {
+    component: null, // 这会禁用 edit 链接
+  },
+  sidebar: {
+    autoCollapse: false,
+  },
+  toc: {
+    float: true,
+  },
+
   // ... other theme options
 };
 

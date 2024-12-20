@@ -18,7 +18,7 @@ const Schema = Block.extend({
 function Code({ codeblock }: { codeblock: HighlightedCode }) {
   return (
     <>
-      <div className="text-sm text-gray-400 w-full min-w-full flex justify-between">
+      <div className="text-center text-sm text-gray-400 w-full min-w-full flex justify-between">
         {codeblock.meta}
         <CopyButton text={codeblock.code} />
       </div>
