@@ -24,9 +24,6 @@ const themeConfig: DocsThemeConfig = {
   sidebar: {
     autoCollapse: false,
   },
-  toc: {
-    float: true,
-  },
 
   // ... other theme options
 };

@@ -48,7 +48,7 @@ export function Scrollycoding(props: unknown) {
           </Selectable>
         ))}
       </div>
-      <div className="w-[40vw] max-w-xl rounded-lg bg-[#1f1f1f]">
+      <div className="w-[30vw] rounded-lg bg-[#1f1f1f]">
         <div className="top-16 sticky overflow-auto p-4">
           <Selection
             from={steps.map((step, i) => (
