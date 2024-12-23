@@ -95,19 +95,22 @@ export function CodeTabs({
           ))}
         </TabsList>
       </div>
-      {tabs.map((tab, i) => (
-        <TabsContent
-          key={tab.meta}
-          value={tab.meta}
-          className="mt-0 overflow-x-auto"
-        >
-          <Pre
-            code={tabs[i]}
-            className="p-4 m-0 rounded-none bg-[#1f1f1f] rounded-b-lg overflow-auto"
-            handlers={[tokenTransitions, wordWrap]}
-          />
-        </TabsContent>
-      ))}
+      <div className="relative">
+        {tabs.map((tab, i) => (
+          <TabsContent
+            key={tab.meta}
+            value={tab.meta}
+            className="mt-0 overflow-x-auto"
+          >
+            <Pre
+              code={tabs[i]}
+              className="p-4 m-0 rounded-none bg-[#1f1f1f] rounded-b-lg overflow-auto"
+              handlers={[tokenTransitions, wordWrap]}
+              key={`${tab.meta}-${tab.code}`}
+            />
+          </TabsContent>
+        ))}
+      </div>
     </Tabs>
   );
 }
