@@ -18,12 +18,19 @@ export function CopyButton({ text }: { text: string }) {
   };
 
   return (
-    <button
-      className="hover:bg-gray-400/20 p-1 rounded ml-auto text-zinc-400"
+    <span
+      className="hover:bg-gray-400/20 p-1 rounded ml-auto text-zinc-400 cursor-pointer inline-flex items-center"
       aria-label="Copy to clipboard"
       onClick={copyToClipboard}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          copyToClipboard();
+        }
+      }}
     >
       {copied ? <Check size={16} /> : <Copy size={16} />}
-    </button>
+    </span>
   );
 }

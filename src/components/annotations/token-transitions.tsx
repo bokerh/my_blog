@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnnotationHandler, InnerToken } from "codehike/code";
 import { CustomPreProps, InnerPre, getPreRef } from "codehike/code";
 import {
@@ -8,7 +7,7 @@ import {
 } from "codehike/utils/token-transitions";
 import React from "react";
 
-const MAX_TRANSITION_DURATION = 10000; // milliseconds
+const MAX_TRANSITION_DURATION = 900; // milliseconds
 
 export class SmoothPre extends React.Component<CustomPreProps> {
   ref: React.RefObject<HTMLPreElement>;
@@ -32,9 +31,12 @@ export class SmoothPre extends React.Component<CustomPreProps> {
   ) {
     const transitions = calculateTransitions(this.ref.current!, snapshot);
     transitions.forEach(({ element, keyframes, options }) => {
-      const { translateX, translateY, ...kf } = keyframes as any;
+      const { translateX, translateY, ...kf } = keyframes as {
+        translateX?: [number, number];
+        translateY?: [number, number];
+      };
       if (translateX && translateY) {
-        kf.translate = [
+        (kf as { translate: string[] }).translate = [
           `${translateX[0]}px ${translateY[0]}px`,
           `${translateX[1]}px ${translateY[1]}px`,
         ];

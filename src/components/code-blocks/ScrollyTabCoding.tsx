@@ -36,14 +36,14 @@ export function ScrollTabCoding(props: unknown) {
             key={i}
             index={i}
             selectOn={["click", "scroll"]}
-            className="w-min-[30vw] border-l-4 border-transparent data-[selected=true]:border-blue-400 px-5 pt-2 pb-6 mb-24 rounded bg-zinc-500/10"
+            className="min-w-[20vw] max-w-[35vw] border-l-4 border-transparent data-[selected=true]:border-zinc-100 px-5 pt-2 pb-6 mb-24 rounded bg-zinc-500/10"
           >
             <h2 className="mt-4 text-xl">{step.title}</h2>
             <div>{step.children}</div>
           </Selectable>
         ))}
       </div>
-      <div className="w-[30vw] rounded-lg bg-background">
+      <div className="w-[35vw] rounded-lg bg-background">
         <div className="top-32 mt-16 my-[3vh] sticky overflow-auto p-4">
           <Selection
             from={steps.map((step, i) => (
