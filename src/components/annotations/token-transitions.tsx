@@ -6,7 +6,7 @@ import {
   TokenTransitionsSnapshot,
   getStartingSnapshot,
 } from "codehike/utils/token-transitions";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 
 const ANIMATION_CONFIG = {
   duration: 400,
@@ -14,10 +14,15 @@ const ANIMATION_CONFIG = {
   easing: "cubic-bezier(0.4, 0, 0.2, 1)",
 };
 
+// 用于存储每个 tab 的内容和快照
+const contentCache = new Map<string, string>();
+const snapshotCache = new Map<string, TokenTransitionsSnapshot>();
+
+// 找出相同的 token 并计算最佳匹配
+
 function SmoothPre(props: CustomPreProps) {
   const ref = getPreRef(props);
-  const prevSnapshotRef = useRef<TokenTransitionsSnapshot>([]);
-  const isFirstRender = useRef(true);
+  const tabKey = (props.children as { key?: string })?.key || "default";
 
   useEffect(() => {
     if (!ref.current) return;
@@ -26,17 +31,28 @@ function SmoothPre(props: CustomPreProps) {
       selector: "span[data-ch-token]",
     });
 
-    if (isFirstRender.current) {
-      prevSnapshotRef.current = snapshot;
-      isFirstRender.current = false;
+    // 如果这个 tab 还没有初始化
+    if (!snapshotCache.has(tabKey)) {
+      snapshotCache.set(tabKey, snapshot);
+      contentCache.set(tabKey, ref.current.textContent || "");
+      return;
     }
-  }, [ref]);
+  }, [ref, tabKey]);
 
   useEffect(() => {
-    if (!ref.current || isFirstRender.current) return;
+    if (!ref.current || !snapshotCache.has(tabKey)) return;
 
     requestAnimationFrame(() => {
       if (!ref.current) return;
+
+      const currentText = ref.current.textContent || "";
+      const cachedText = contentCache.get(tabKey) || "";
+      const prevSnapshot = snapshotCache.get(tabKey) || [];
+
+      // 如果内容没有变化，不需要处理
+      if (currentText === cachedText) {
+        return;
+      }
 
       const elements = Array.from(
         ref.current.querySelectorAll<HTMLElement>("span[data-ch-token]")
@@ -47,99 +63,95 @@ function SmoothPre(props: CustomPreProps) {
       });
 
       // 获取前后内容
-      const prevContent = prevSnapshotRef.current.map((s) => s.content);
-      const currentContent = currentSnapshot.map((s) => s.content);
+      const prevTokens = prevSnapshot
+        .map((s) => s.content)
+        .filter((s): s is string => s !== null);
+      const currentTokens = currentSnapshot
+        .map((s) => s.content)
+        .filter((s): s is string => s !== null);
 
       console.log("Token content comparison:", {
-        prev: prevContent,
-        current: currentContent,
+        prev: prevTokens,
+        current: currentTokens,
       });
 
-      // 手动找出变化的 token
-      const changes: Array<[number, number]> = [];
-      const removedIndices: number[] = [];
-      const addedIndices: number[] = [];
+      // 处理所有 token 的移动
+      elements.forEach((element, currentIndex) => {
+        const currentToken = currentTokens[currentIndex];
+        const currentSnap = currentSnapshot[currentIndex];
+        if (!currentToken || !currentSnap) return;
 
-      // 找出修改和删除的 token
-      prevContent.forEach((content, prevIndex) => {
-        const currentIndex = currentContent.indexOf(content);
-        if (currentIndex === -1) {
-          // Token 被删除了
-          removedIndices.push(prevIndex);
-        } else if (currentIndex !== prevIndex) {
-          // Token 位置发生变化
-          changes.push([prevIndex, currentIndex]);
+        // 检查这个位置上的 token 是否发生了变化
+        const prevSnap = prevSnapshot[currentIndex];
+
+        if (prevSnap && prevSnap.content === currentToken) {
+          // 位置和内容都没变，不需要动画
+          return;
+        }
+
+        // 在之前的内容中查找相同的 token
+        const prevIndices = prevTokens
+          .map((token, index) => ({ token, index }))
+          .filter(({ token }) => token === currentToken)
+          .map(({ index }) => index);
+
+        if (prevIndices.length > 0) {
+          // 找到了相同的 token，从最近的位置平移
+          const nearestIndex = prevIndices.reduce((nearest, index) => {
+            const currentDist = Math.abs(index - currentIndex);
+            const nearestDist = Math.abs(nearest - currentIndex);
+            return currentDist < nearestDist ? index : nearest;
+          }, prevIndices[0]);
+
+          const prevSnap = prevSnapshot[nearestIndex];
+          if (prevSnap) {
+            // 从最近的相同 token 位置平移
+            const dx = prevSnap.x - currentSnap.x;
+            const dy = prevSnap.y - currentSnap.y;
+
+            element.animate(
+              [
+                {
+                  transform: `translate(${dx}px, ${dy}px)`,
+                  color: prevSnap.color,
+                  opacity: 1,
+                },
+                {
+                  transform: "translate(0, 0)",
+                  color: currentSnap.color,
+                  opacity: 1,
+                },
+              ],
+              {
+                duration: ANIMATION_CONFIG.duration,
+                delay: currentIndex * ANIMATION_CONFIG.staggerDelay,
+                easing: ANIMATION_CONFIG.easing,
+                fill: "both",
+              }
+            );
+          }
+        } else {
+          // 新的 token 或内容变化的 token，使用淡入效果
+          element.animate(
+            [
+              { opacity: 0, transform: "scale(0.95)" },
+              { opacity: 1, transform: "scale(1)" },
+            ],
+            {
+              duration: ANIMATION_CONFIG.duration,
+              delay: currentIndex * ANIMATION_CONFIG.staggerDelay,
+              easing: ANIMATION_CONFIG.easing,
+              fill: "both",
+            }
+          );
         }
       });
 
-      // 找出新增的 token
-      currentContent.forEach((content, currentIndex) => {
-        if (!prevContent.includes(content)) {
-          addedIndices.push(currentIndex);
-        }
-      });
-
-      console.log("Changes detected:", {
-        modified: changes,
-        removed: removedIndices,
-        added: addedIndices,
-      });
-
-      // 处理变化的 token
-      changes.forEach(([prevIndex, currentIndex], index) => {
-        const prevToken = prevSnapshotRef.current[prevIndex];
-        const currentToken = currentSnapshot[currentIndex];
-        const element = elements[currentIndex];
-
-        if (!prevToken || !currentToken || !element) return;
-
-        const dx = prevToken.x - currentToken.x;
-        const dy = prevToken.y - currentToken.y;
-
-        element.animate(
-          [
-            {
-              transform: `translate(${dx}px, ${dy}px)`,
-              color: prevToken.color,
-              opacity: 1,
-            },
-            {
-              transform: "translate(0, 0)",
-              color: currentToken.color,
-              opacity: 1,
-            },
-          ],
-          {
-            duration: ANIMATION_CONFIG.duration,
-            delay: index * ANIMATION_CONFIG.staggerDelay,
-            easing: ANIMATION_CONFIG.easing,
-            fill: "both",
-          }
-        );
-      });
-
-      // 处理新增的 token
-      addedIndices.forEach((index, i) => {
-        const element = elements[index];
-        if (!element) return;
-
-        element.animate(
-          [
-            { opacity: 0, transform: "scale(0.95)" },
-            { opacity: 1, transform: "scale(1)" },
-          ],
-          {
-            duration: ANIMATION_CONFIG.duration,
-            delay: (changes.length + i) * ANIMATION_CONFIG.staggerDelay,
-            easing: ANIMATION_CONFIG.easing,
-            fill: "both",
-          }
-        );
-      });
-
-      prevSnapshotRef.current = currentSnapshot;
+      // 更新缓存
+      snapshotCache.set(tabKey, currentSnapshot);
+      contentCache.set(tabKey, currentText);
     });
-  }, [props.children, ref]);
+  }, [props.children, ref, tabKey]);
 
   return (
     <InnerPre
