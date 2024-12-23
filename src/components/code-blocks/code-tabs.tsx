@@ -3,7 +3,7 @@ import { Block, HighlightedCodeBlock, parseProps } from "codehike/blocks";
 import { Pre, HighlightedCode } from "codehike/code";
 import { z } from "zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useHorizontalScroll } from "@/components/ui/scroll-area";
+import { useHorizontalScroll, useScrollSelect } from "@/hooks/scroll";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 
@@ -22,48 +22,16 @@ export function CodeWithTabs(props: unknown) {
 export function CodeTabs(props: { tabs: HighlightedCode[] }) {
   const { tabs } = props;
   const scrollContainerRef = useHorizontalScroll();
+  const { handleWheel, handleScroll } = useScrollSelect({
+    items: tabs,
+    getKey: (tab) => tab.meta,
+    initialSelectedKey: tabs[0]?.meta,
+    onSelect: (tab) => setSelectedTab(tab.meta),
+    className: "tab-trigger",
+    threshold: 50,
+  });
+
   const [selectedTab, setSelectedTab] = useState(tabs[0]?.meta);
-
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-
-    const currentIndex = tabs.findIndex((tab) => tab.meta === selectedTab);
-    let nextIndex;
-
-    if (e.deltaY > 0) {
-      nextIndex = (currentIndex + 1) % tabs.length;
-    } else {
-      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-    }
-
-    setSelectedTab(tabs[nextIndex].meta);
-  };
-
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const container = e.currentTarget;
-    const tabElements = container.getElementsByClassName("tab-trigger");
-
-    let closestTab = null;
-    let minDistance = Infinity;
-    const containerCenter = container.scrollLeft + container.clientWidth / 2;
-
-    Array.from(tabElements).forEach((tabElement) => {
-      const tab = tabElement as HTMLElement;
-      const tabCenter = tab.offsetLeft + tab.offsetWidth / 2;
-      const distance = Math.abs(containerCenter - tabCenter);
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestTab = tab;
-      }
-    });
-    if (closestTab) {
-      const tabValue = (closestTab as HTMLElement).getAttribute("data-value");
-      if (tabValue && tabValue !== selectedTab) {
-        setSelectedTab(tabValue);
-      }
-    }
-  };
 
   return (
     <Tabs
