@@ -1,42 +1,77 @@
 "use client";
-import { Block, HighlightedCodeBlock, parseProps } from "codehike/blocks";
 import { Pre, HighlightedCode } from "codehike/code";
-import { z } from "zod";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useHorizontalScroll, useScrollSelect } from "@/hooks/scroll";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const Schema = Block.extend({ tabs: z.array(HighlightedCodeBlock) });
+import { tokenTransitions } from "@/components/annotations/token-transitions";
+import { wordWrap } from "@/components/annotations/word-wrap";
 
 const CopyButton = dynamic(
   () => import("../ui/copy-button/copybutton").then((mod) => mod.CopyButton),
   { ssr: false }
 );
 
-export function CodeWithTabs(props: unknown) {
-  const { tabs } = parseProps(props, Schema);
-  return <CodeTabs tabs={tabs} />;
+export function CodeWithTabs({
+  tabs,
+  selectedTab,
+  onTabChange,
+  onStepChange,
+}: {
+  tabs: HighlightedCode[];
+  selectedTab?: string;
+  onTabChange?: (tab: string) => void;
+  onStepChange?: () => void;
+}) {
+  return (
+    <CodeTabs
+      tabs={tabs}
+      selectedTab={selectedTab}
+      onTabChange={onTabChange}
+      onStepChange={onStepChange}
+    />
+  );
 }
 
-export function CodeTabs(props: { tabs: HighlightedCode[] }) {
-  const { tabs } = props;
+export function CodeTabs({
+  tabs,
+  selectedTab: externalSelectedTab,
+  onTabChange,
+  onStepChange,
+}: {
+  tabs: HighlightedCode[];
+  selectedTab?: string;
+  onTabChange?: (tab: string) => void;
+  onStepChange?: () => void;
+}) {
+  const [internalSelectedTab, setInternalSelectedTab] = useState(tabs[0]?.meta);
+  const selectedTab = externalSelectedTab || internalSelectedTab;
+
+  useEffect(() => {
+    onStepChange?.();
+  }, [tabs, onStepChange]);
+
+  const handleTabChange = (tab: string) => {
+    setInternalSelectedTab(tab);
+    onTabChange?.(tab);
+  };
+
   const scrollContainerRef = useHorizontalScroll();
   const { handleWheel, handleScroll } = useScrollSelect({
     items: tabs,
     getKey: (tab) => tab.meta,
     initialSelectedKey: tabs[0]?.meta,
-    onSelect: (tab) => setSelectedTab(tab.meta),
+    onSelect: (tab) => handleTabChange(tab.meta),
     className: "tab-trigger",
     threshold: 50,
   });
 
-  const [selectedTab, setSelectedTab] = useState(tabs[0]?.meta);
-
   return (
     <Tabs
       value={selectedTab}
-      onValueChange={setSelectedTab}
+      onValueChange={handleTabChange}
       className="dark rounded"
     >
       <div
@@ -69,6 +104,7 @@ export function CodeTabs(props: { tabs: HighlightedCode[] }) {
           <Pre
             code={tabs[i]}
             className="p-4 m-0 rounded-none bg-[#1f1f1f] rounded-b-lg overflow-auto"
+            handlers={[tokenTransitions, wordWrap]}
           />
         </TabsContent>
       ))}

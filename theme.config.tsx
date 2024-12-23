@@ -1,5 +1,5 @@
 import type { DocsThemeConfig } from "nextra-theme-docs";
-import { Code, InlineCode } from "./src/components/code-blocks/code";
+import { Code, InlineCode } from "./src/components/code-blocks/BasicCode";
 import type { FC } from "react";
 
 const themeConfig: DocsThemeConfig = {
