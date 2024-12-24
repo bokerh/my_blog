@@ -19,6 +19,7 @@ export function ScrollTabCoding(props: unknown) {
   const stepsRef = useRef<HTMLDivElement>(null);
   const codeRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
   const isVisible = useElementVisibility(containerRef, {
     position: "center-vertical",
     offset: 100,
